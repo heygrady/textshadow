@@ -5,7 +5,7 @@
 		filter = "progid:DXImageTransform.Microsoft.";
 	
 	// create a plugin
-	$.fn.textshadow = function(value) {
+	$.fn.textshadow = function(value, options) {
 		var values = rtextshadow.exec(value),
 			x, y, blur, color, opacity;
 								
@@ -57,18 +57,37 @@
 	function wrapTextNodes(elem) {
 		$(elem).contents().each(function() {
 			var $elem, $orig, $clone;
+			$elem = $(this);
 			if (this.nodeType === 3) {
-				//TODO: skip text with a parent span.ui-text-shadow-original or span.ui-text-shadow-copy
-				$elem = $(this).wrap('<span class="ui-text-shadow"><span class="ui-text-shadow-original"></span></span>');
-				$orig = $elem.parent();
-				$clone = $orig.clone()
-					.addClass('ui-text-shadow-copy')
-					.removeClass('ui-text-shadow-original')
-					.appendTo($elem.parent().parent());
-			} else if (this.nodeType === 1) {
+				$.each(makeWords(this), function() {
+					$elem = $(this).wrap('<span class="ui-text-shadow"><span class="ui-text-shadow-original"></span></span>');
+					$orig = $elem.parent();
+					$clone = $orig.clone()
+						.addClass('ui-text-shadow-copy')
+						.removeClass('ui-text-shadow-original')
+						.appendTo($elem.parent().parent());
+				});
+			} else if (this.nodeType === 1 && (
+					!$elem.hasClass('ui-text-shadow') ||
+					!$elem.hasClass('ui-text-shadow-original') ||
+					!$elem.hasClass('ui-text-shadow-copy')
+				)) {
 				wrapTextNodes(this);
 			}
 		});
+	}
+	
+	function makeWords(textNode) {
+		var words = [],
+			split = textNode.nodeValue.split(/\s/),
+			text = textNode, length;
+		words.push(textNode);
+		$.each(split, function() {
+			length = this.length;
+			text = text.splitText(length + (/\s/.test(text.nodeValue.charAt(length)) ? 1 : 0));
+			words.push(text);
+		});
+		return words;
 	}
 				
 	// http://haacked.com/archive/2009/12/29/convert-rgb-to-hex.aspx
