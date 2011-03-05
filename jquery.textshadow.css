@@ -8,6 +8,11 @@
 .ui-text-shadow-copy {
   position: absolute;
   z-index: 1;
+  
+  /* default positioning */
+  left: 0;
+  top: 0;
+  
   /* turn off shadow */
   text-shadow: none;
   
