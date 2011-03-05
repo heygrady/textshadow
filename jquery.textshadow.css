@@ -1,0 +1,20 @@
+.ui-text-shadow, .ui-text-shadow-original {
+  position: relative;
+}
+.ui-text-shadow-original {
+  z-index: 2;
+  text-shadow: none;
+}
+.ui-text-shadow-copy {
+  position: absolute;
+  z-index: 1;
+  /* turn off shadow */
+  text-shadow: none;
+  
+  /* turn off selection */
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
