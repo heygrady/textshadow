@@ -18,13 +18,15 @@
 		
 		// loop the found items
 		return this.each(function() {
-			var $elem = $(this), $orig, $copy;
+			var $elem = $(this), $copy;
 			
-			// skip already converted items
+			// find the copy elements
 			$copy = $elem.find('.ui-text-shadow-copy');
+			
+			// create them if none exist
 			if (!$copy.length) {
-				// create all of the elements
-				wrapTextNodes(this);
+				// create all of the elements				
+				$.each(allWords(this), replaceWord);				
 				$copy = $elem.find('.ui-text-shadow-copy');
 			}
 			
@@ -53,37 +55,50 @@
 			});
 		});
 	};
+	
+	function replaceWord() {
+		if (!this.parentNode) { // IE 9
+			return;
+		}
+		$(this).replaceWith([
+			'<span class="ui-text-shadow">',
+				'<span class="ui-text-shadow-original">',
+					this.nodeValue,
+				'</span>',
+				'<span class="ui-text-shadow-copy">',
+					this.nodeValue,
+				'</span>',
+			'</span>'
+		].join(''));
+	}
 
-	function wrapTextNodes(elem) {
+	function allWords(elem, otherwords) {
+		var words = otherwords || [];
 		$(elem).contents().each(function() {
-			var $elem, $orig, $clone;
-			$elem = $(this);
-			if (this.nodeType === 3) {
-				$.each(makeWords(this), function() {
-					$elem = $(this).wrap('<span class="ui-text-shadow"><span class="ui-text-shadow-original"></span></span>');
-					$orig = $elem.parent();
-					$clone = $orig.clone()
-						.addClass('ui-text-shadow-copy')
-						.removeClass('ui-text-shadow-original')
-						.appendTo($elem.parent().parent());
-				});
+			var $elem = $(this);
+			if (this.nodeType === 3 && this.data) {
+				words = makeWords(this, words);
 			} else if (this.nodeType === 1 && (
 					!$elem.hasClass('ui-text-shadow') ||
 					!$elem.hasClass('ui-text-shadow-original') ||
 					!$elem.hasClass('ui-text-shadow-copy')
 				)) {
-				wrapTextNodes(this);
+				words = allWords(this, words);
 			}
 		});
+		return words;
 	}
 	
-	function makeWords(textNode) {
-		var words = [],
+	function makeWords(textNode, otherwords) {
+		var words = otherwords || [],
 			split = textNode.nodeValue.split(/\s/),
 			text = textNode, length;
 		words.push(textNode);
 		$.each(split, function() {
 			length = this.length;
+			if (!length) { // IE 9
+				return false;
+			}
 			text = text.splitText(length + (/\s/.test(text.nodeValue.charAt(length)) ? 1 : 0));
 			words.push(text);
 		});

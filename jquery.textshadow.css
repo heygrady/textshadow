@@ -5,9 +5,6 @@
 	z-index: 2;
 	text-shadow: none;
 }
-.ui-text-shadow, .ui-text-shadow-copy {
-	/*width: 100%;*/
-}
 .ui-text-shadow-copy {
 	position: absolute;
 	z-index: 1;
