@@ -1,5 +1,5 @@
 # Text Shadow
-This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It uses the Microsoft proprietary [blur filter](http://msdn.microsoft.com/en-us/library/ms532979(v=vs.85).aspx) and the [alpha filter](http://msdn.microsoft.com/en-us/library/ms532967(v=vs.85).aspx) along with layering to closely approximate `text-shadow`.
+This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It uses the Microsoft proprietary [blur filter](http://msdn.microsoft.com/en-us/library/ms532979(v=vs.85\).aspx) and the [alpha filter](http://msdn.microsoft.com/en-us/library/ms532967(v=vs.85\).aspx) along with layering to closely approximate `text-shadow`.
 
 * currently only pixel units are supported
 * currently only a single shadow is supported
