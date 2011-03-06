@@ -32,5 +32,10 @@ There is a corresponding css file that provides base styles for the new elements
       ...
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.js"></script>
       <script src="jquery.textshadow.js"></script>
+      <script>
+      if (!Modernizr.textshadow) {
+        $('h1').textshadow('2px 2px 2px #000');
+      }
+      </script>
     </body>
     </html>
