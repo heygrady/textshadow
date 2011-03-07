@@ -2,8 +2,7 @@
 This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It uses the Microsoft proprietary [blur filter](http://msdn.microsoft.com/en-us/library/ms532979(v=vs.85\).aspx) and the [alpha filter](http://msdn.microsoft.com/en-us/library/ms532967(v=vs.85\).aspx) along with layering to closely approximate `text-shadow`.
 
 * currently only pixel units are supported
-* currently only a single shadow is supported
-* the color must be the last property (even though the [W3C](http://www.w3.org/TR/css3-text/#text-shadow) spec allows it to be first)
+* the color must be the last property
 
 # Usage
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow).
@@ -11,6 +10,9 @@ It is recommended to use this library with a feature detection library such as [
     if (!Modernizr.textshadow) {
       // normal
       $('h1').textshadow('2px 2px 2px #000');
+      
+      // multiple shadows
+      $('h1.cool').textshadow('2px 2px 2px #0f0, 4px 4px 2px #f00, 6px 6px 2px #00f');
       
       // rgba
       $('h2').textshadow('2px 2px 2px rgba(0, 0, 0, 0.5)');
