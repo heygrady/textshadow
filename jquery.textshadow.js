@@ -56,20 +56,26 @@
 		});
 	};
 	
+	var shadowNode = $('<span class="ui-text-shadow" />')[0],
+		origNode = $('<span class="ui-text-shadow-original" />')[0],
+		copyNode = $('<span class="ui-text-shadow-copy" />')[0];
+	
 	function replaceWord() {
 		if (!this.parentNode) { // IE 9
 			return;
 		}
-		$(this).replaceWith([
-			'<span class="ui-text-shadow">',
-				'<span class="ui-text-shadow-original">',
-					this.nodeValue,
-				'</span>',
-				'<span class="ui-text-shadow-copy">',
-					this.nodeValue,
-				'</span>',
-			'</span>'
-		].join(''));
+		
+		var shadow = shadowNode.cloneNode(),
+			orig = origNode.cloneNode(),
+			copy = copyNode.cloneNode();
+			
+		shadow.appendChild(orig);
+		shadow.appendChild(copy);
+		
+        this.parentNode.insertBefore(shadow, this);
+        
+        orig.appendChild(this);
+        copy.appendChild(this.cloneNode());
 	}
 
 	function allWords(elem, otherwords) {
@@ -89,17 +95,36 @@
 		return words;
 	}
 	
+	// space regex
+	var rspace = /(\s*)/g;
+	
+	// splits text nodes
 	function makeWords(textNode, otherwords) {
+		// Split the text in the node by space characters
 		var words = otherwords || [],
 			split = textNode.nodeValue.split(/\s/),
-			text = textNode, length;
-		words.push(textNode);
+			text = textNode,
+			length, spaces;
+		
+		// Skip empty nodes
+		if (!textNode.nodeValue.length) {
+			return words;
+		}
+		
+		// Add the original string (it gets split)
+		words.push(text);
+		
+		// loop by the splits
 		$.each(split, function() {
 			length = this.length;
 			if (!length) { // IE 9
-				return false;
+				return true;
 			}
-			text = text.splitText(length + (/\s/.test(text.nodeValue.charAt(length)) ? 1 : 0));
+			
+			//include the trailing space characters
+			rspace.lastIndex = length; // put the index to the end of the found word
+			spaces = rspace.exec(text.nodeValue); // find any trailing spaces
+			text = text.splitText(length + (spaces ? spaces[1].length : 0));
 			words.push(text);
 		});
 		return words;
