@@ -2,7 +2,8 @@
 	//regex
 	var rtextshadow = /([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)?\s*([#a-z]*.*)?/, 
 		rcolor= /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\.\d]+))?/,
-		filter = "progid:DXImageTransform.Microsoft.";
+		filter = "progid:DXImageTransform.Microsoft.",
+		rspace = /(\s*)/g;
 	
 	// create a plugin
 	$.fn.textshadow = function(value, options) {
@@ -26,7 +27,7 @@
 			// create them if none exist
 			if (!$copy.length) {
 				// create all of the elements				
-				$.each(allWords(this), replaceWord);				
+				allWords(this);				
 				$copy = $elem.find('.ui-text-shadow-copy');
 			}
 			
@@ -55,64 +56,36 @@
 			});
 		});
 	};
+	// function for returning al words in an element as text nodes
+	function allWords(elem) {
+		$(elem).contents().each(function() {
+			if (this.nodeType === 3 && this.data) {
+				makeWords(this);
+				return true;
+			}
+			
+			var $elem = $(this);
+			if (this.nodeType === 1 && (!$elem.hasClass('ui-text-shadow') || !$elem.hasClass('ui-text-shadow-original') || !$elem.hasClass('ui-text-shadow-copy'))) {
+				allWords(this);
+				return true;
+			}
+		});
+	}
 	
-	var shadowNode = $('<span class="ui-text-shadow" />')[0],
-		origNode = $('<span class="ui-text-shadow-original" />')[0],
-		copyNode = $('<span class="ui-text-shadow-copy" />')[0];
-	
-	function replaceWord() {
-		if (!this.parentNode) { // IE 9
+	// splits text nodes
+	function makeWords(textNode) {
+		// Split the text in the node by space characters
+		var text = textNode.nodeValue,
+			split = text.split(/\s/),
+			length, lastIndex = 0, spaces, node;
+		
+		// Skip empty nodes
+		if (!text) {
 			return;
 		}
 		
-		var shadow = shadowNode.cloneNode(),
-			orig = origNode.cloneNode(),
-			copy = copyNode.cloneNode();
-			
-		shadow.appendChild(orig);
-		shadow.appendChild(copy);
-		
-        this.parentNode.insertBefore(shadow, this);
-        
-        orig.appendChild(this);
-        copy.appendChild(this.cloneNode());
-	}
-
-	function allWords(elem, otherwords) {
-		var words = otherwords || [];
-		$(elem).contents().each(function() {
-			var $elem = $(this);
-			if (this.nodeType === 3 && this.data) {
-				words = makeWords(this, words);
-			} else if (this.nodeType === 1 && (
-					!$elem.hasClass('ui-text-shadow') ||
-					!$elem.hasClass('ui-text-shadow-original') ||
-					!$elem.hasClass('ui-text-shadow-copy')
-				)) {
-				words = allWords(this, words);
-			}
-		});
-		return words;
-	}
-	
-	// space regex
-	var rspace = /(\s*)/g;
-	
-	// splits text nodes
-	function makeWords(textNode, otherwords) {
-		// Split the text in the node by space characters
-		var words = otherwords || [],
-			split = textNode.nodeValue.split(/\s/),
-			text = textNode,
-			length, spaces;
-		
-		// Skip empty nodes
-		if (!textNode.nodeValue.length) {
-			return words;
-		}
-		
 		// Add the original string (it gets split)
-		words.push(text);
+		var fragment = document.createDocumentFragment();
 		
 		// loop by the splits
 		$.each(split, function() {
@@ -122,12 +95,35 @@
 			}
 			
 			//include the trailing space characters
-			rspace.lastIndex = length; // put the index to the end of the found word
-			spaces = rspace.exec(text.nodeValue); // find any trailing spaces
-			text = text.splitText(length + (spaces ? spaces[1].length : 0));
-			words.push(text);
+			rspace.lastIndex = lastIndex + length;
+			spaces = rspace.exec(text);
+			node = wrapWord(text.substr(lastIndex, length + spaces[1].length));
+			if (node !== null) {
+				fragment.appendChild(node);
+			}
+			lastIndex = lastIndex + length + spaces[1].length;
 		});
-		return words;
+		textNode.parentNode.replaceChild(fragment.cloneNode(true), textNode);
+	}
+	
+	var shadowNode = $('<span class="ui-text-shadow" />')[0],
+		origNode = $('<span class="ui-text-shadow-original" />')[0],
+		copyNode = $('<span class="ui-text-shadow-copy" />')[0];
+	
+	function wrapWord(text) {
+		if (!text.length) { // IE 9
+			return null;
+		}
+		var shadow = shadowNode.cloneNode(),
+			orig = origNode.cloneNode(),
+			copy = copyNode.cloneNode();
+			
+		shadow.appendChild(orig);
+		shadow.appendChild(copy);
+		
+		orig.appendChild(document.createTextNode(text));
+		copy.appendChild(document.createTextNode(text));
+		return shadow;
 	}
 				
 	// http://haacked.com/archive/2009/12/29/convert-rgb-to-hex.aspx
