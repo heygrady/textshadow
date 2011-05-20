@@ -1,7 +1,7 @@
 (function($, window, undefined) {
 	//regex
 	var rtextshadow = /([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)?\s*([#a-z]*.*)?/, 
-		rcolor= /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\.\d]+))?/,
+		rcolor= /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?(?:\s*,\s*([\.\d]+))?/,
 		filter = "progid:DXImageTransform.Microsoft.",
 		rspace = /(\s*)/g;
 	
@@ -159,7 +159,7 @@
 		var matches = rcolor.exec(color), rgb;
 		
 		// handle hsl
-		if (matches && matches[1] === 'hsla') {
+		if (matches && matches[1] === 'hsl') {
 			rgb = hsl2rgb(matches[2], matches[3], matches[4]);
 			matches[2] = rgb[0];
 			matches[3] = rgb[1];

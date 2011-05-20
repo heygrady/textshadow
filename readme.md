@@ -25,7 +25,7 @@ It is recommended to use this library with a feature detection library such as [
       $('h1').textshadow('2px 2px 2px rgba(0, 0, 0, 0.5)');
       
       // hsla
-      $('h1').textshadow('2px 2px 2px hsla(0, 0, 0, 0.5)');
+      $('h1').textshadow('2px 2px 2px hsla(0, 100%, 54%, .5)');
     }
     
 There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well.
