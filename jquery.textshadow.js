@@ -11,7 +11,8 @@
 			options = value;
 			value = null;
 		}
-		var skipStyle = options.skipStyle || true;
+		var opts = options || {};
+		var useStyle = opts.useStyle || false;
 		
 		// loop the found items
 		return this.each(function() {
@@ -26,7 +27,7 @@
 				allWords(this);				
 				$copy = $elem.find('.ui-text-shadow-copy');
 			}
-			if (!skipStyle)
+			if (useStyle) {
 				applyStyles($elem, $copy, value);
 			}
 		});

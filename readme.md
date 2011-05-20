@@ -13,7 +13,7 @@ It is recommended to use this library with a feature detection library such as [
       $('h1').textshadow();
 
       // reading the current style automatically
-      $('h1').textshadow({skipStyles: false});
+      $('h1').textshadow({useStyle: true});
       
       // normal
       $('h1').textshadow('2px 2px 2px #000');
