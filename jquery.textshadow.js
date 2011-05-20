@@ -7,15 +7,11 @@
 	
 	// create a plugin
 	$.fn.textshadow = function(value, options) {
-		var values = rtextshadow.exec(value),
-			x, y, blur, color, opacity;
-								
-		// capture the values
-		x = parseFloat(values[1]); // TODO: handle units
-		y = parseFloat(values[2]); // TODO: handle units
-		blur = values[3] !== undefined ? parseFloat(values[3]) : 0; // TODO: handle units
-		color = values[4] !== undefined ? toHex(values[4]) : 'inherit';
-		opacity = getAlpha(values[4]);
+		if (typeof value === 'object' && !options) {
+			options = value;
+			value = null;
+		}
+		var skipStyle = options.skipStyle || true;
 		
 		// loop the found items
 		return this.each(function() {
@@ -30,32 +26,15 @@
 				allWords(this);				
 				$copy = $elem.find('.ui-text-shadow-copy');
 			}
-			
-			// style the elements
-			$copy.css({
-				color: color,
-				left: (x - blur) + 'px',
-				top: (y - blur) + 'px'
-			});
-			
-			// try to prevent selection
-			$copy.each(function() {
-				var copy = this;
-				copy.unselectable = "on";
-				copy.onselectstart = function(){return false;};
-				
-				// add in the filters
-				copy.style.filter = [
-					filter + "Alpha(",
-						"opacity=" + parseInt(opacity * 100, 10),
-					") ",
-					filter + "Blur(",
-						"pixelRadius=" + blur,
-					")"
-				].join('');
-			});
+			if (!skipStyle)
+				applyStyles($elem, $copy, value);
+			}
 		});
 	};
+	
+	//---------------------
+	// For splitting words
+	//---------------------
 	// function for returning al words in an element as text nodes
 	function allWords(elem) {
 		$(elem).contents().each(function() {
@@ -125,7 +104,54 @@
 		copy.appendChild(document.createTextNode(text));
 		return shadow;
 	}
-				
+	
+	//---------------------
+	// For Applying Styles
+	//---------------------
+	function applyStyles($elem, $copy, value)  {
+		$copy.each(function() {
+			var copy = this,
+				style = value || $elem[0].currentStyle['text-shadow'];
+				$copy = $(copy);
+			
+			// don't apply style if we can't find one
+			if (!style || style === 'none') {
+				return true;
+			}
+			
+			// parse the style
+			var values = rtextshadow.exec(style),
+				x, y, blur, color, opacity;
+									
+			// capture the values
+			x = parseFloat(values[1]); // TODO: handle units
+			y = parseFloat(values[2]); // TODO: handle units
+			blur = values[3] !== undefined ? parseFloat(values[3]) : 0; // TODO: handle units
+			color = values[4] !== undefined ? toHex(values[4]) : 'inherit';
+			opacity = getAlpha(values[4]);
+			
+			// style the element
+			$copy.css({
+				color: color,
+				left: (x - blur) + 'px',
+				top: (y - blur) + 'px'
+			});
+			
+			// add in the filters
+			copy.style.filter = [
+				filter + "Alpha(",
+					"opacity=" + parseInt(opacity * 100, 10),
+				") ",
+				filter + "Blur(",
+					"pixelRadius=" + blur,
+				")"
+			].join('');
+		});
+	}
+	
+	//---------------------
+	// For Colors
+	//---------------------
 	// http://haacked.com/archive/2009/12/29/convert-rgb-to-hex.aspx
 	function toHex(color) {
 		// handle rgb
