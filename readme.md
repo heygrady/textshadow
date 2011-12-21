@@ -5,14 +5,14 @@ This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It u
 * cutting and pasting text will result in doubled text
 * the creation of the extra DOM nodes could potentially be faster
 
-# Usage
+## Usage
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow).
 
     if (!Modernizr.textshadow) {
       // [default] reading the current style automatically
       $('h1').textshadow();
       
-      // allowing the styles to be applied using CSS
+      // creates the HTML structure but doesn't try to apply the styles
       $('h1').textshadow({useStyle: false});
       
       // normal
@@ -27,7 +27,8 @@ It is recommended to use this library with a feature detection library such as [
       // hsla
       $('h1').textshadow('2px 2px 2px hsla(0, 100%, 54%, .5)');
     }
-    
+ 
+### Required CSS
 There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well.
 
     <!doctype html>
@@ -48,7 +49,8 @@ There is a corresponding css file that provides base styles for the new elements
       </script>
     </body>
     </html>
-
+    
+### Specifying Custom CSS
 For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript.
 
     <!doctype html>
@@ -78,7 +80,7 @@ For performance and flexibility reasons, it's best to use CSS rather than JS to 
       <script src="jquery.textshadow.js"></script>
       <script>
       if (!Modernizr.textshadow) {
-        $('h1').textshadow();
+        $('h1').textshadow({useStyle: false});
       }
       </script>
     </body>
