@@ -9,11 +9,11 @@ This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It u
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow).
 
     if (!Modernizr.textshadow) {
-      // [default] allowing the styles to be applied using CSS
+      // [default] reading the current style automatically
       $('h1').textshadow();
-
-      // reading the current style automatically
-      $('h1').textshadow({useStyle: true});
+      
+      // allowing the styles to be applied using CSS
+      $('h1').textshadow({useStyle: false});
       
       // normal
       $('h1').textshadow('2px 2px 2px #000');
@@ -49,13 +49,14 @@ There is a corresponding css file that provides base styles for the new elements
     </body>
     </html>
 
-For performance and flexibility reasons, its probably best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript.
+For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript.
 
     <!doctype html>
     <html>
     <head>
       ...
 
+      <link rel="stylesheet" href="jquery.textshadow.css">
       <style>
         h1 {
           text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5); /* left top blur color */
@@ -69,7 +70,6 @@ For performance and flexibility reasons, its probably best to use CSS rather tha
           top: 1px; /* top - blur */
         }
       </style>
-      <link rel="stylesheet" href="jquery.textshadow.css">
       <script src="js/libs/modernizr-1.7.min.js"></script>
     </head>
     <body>
