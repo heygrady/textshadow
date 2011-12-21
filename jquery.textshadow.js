@@ -12,7 +12,7 @@
 			value = null;
 		}
 		var opts = options || {};
-		var useStyle = opts.useStyle || false;
+		var useStyle = opts.useStyle === false ? false : true;
 		
 		// loop the found items
 		return this.each(function() {
@@ -28,7 +28,7 @@
 				$copy = $elem.find('.ui-text-shadow-copy');
 			}
 			if (useStyle) {
-				applyStyles($elem, $copy, value);
+				applyStyles($copy, value);
 			}
 		});
 	};
@@ -109,11 +109,18 @@
 	//---------------------
 	// For Applying Styles
 	//---------------------
-	function applyStyles($elem, $copy, value)  {
+	function applyStyles($copy, value)  {
 		$copy.each(function() {
 			var copy = this,
-				style = value || $elem[0].currentStyle['text-shadow'];
-				$copy = $(copy);
+				style = value || copy.currentStyle['text-shadow'],
+				$copy = $(copy),
+				parent = copy.parentNode;
+			
+			// ensure we have the correct style
+			while ((!style || style === 'none') && parent.nodeName !== 'HTML') {
+				style = parent.currentStyle['text-shadow'];
+				parent = parent.parentNode;
+			}
 			
 			// don't apply style if we can't find one
 			if (!style || style === 'none') {
