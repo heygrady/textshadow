@@ -3,7 +3,8 @@
 	var rtextshadow = /([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)?\s*([#a-z]*.*)?/, 
 		rcolor= /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?(?:\s*,\s*([\.\d]+))?/,
 		filter = "progid:DXImageTransform.Microsoft.",
-		rspace = /(\s*)/g;
+		rsplit = /[\s-]/,
+		rspace = /(-?\s*)/g;
 	
 	// create a plugin
 	$.fn.textshadow = function(value, options) {
@@ -56,7 +57,7 @@
 	function makeWords(textNode) {
 		// Split the text in the node by space characters
 		var text = textNode.nodeValue,
-			split = text.split(/\s/),
+			split = text.split(rsplit),
 			length, lastIndex = 0, spaces, node;
 		
 		// Skip empty nodes
@@ -98,8 +99,8 @@
 			orig = origNode.cloneNode(),
 			copy = copyNode.cloneNode();
 			
-		shadow.appendChild(orig);
 		shadow.appendChild(copy);
+		shadow.appendChild(orig);
 		
 		orig.appendChild(document.createTextNode(text));
 		copy.appendChild(document.createTextNode(text));
@@ -142,6 +143,7 @@
 			$copy.css({
 				color: color,
 				left: (x - blur) + 'px',
+				right: -(x - blur) + 'px',
 				top: (y - blur) + 'px'
 			});
 			
