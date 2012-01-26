@@ -3,8 +3,13 @@
 	var rtextshadow = /([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)\s*([\d+.\-]+[a-z%]*)?\s*([#a-z]*.*)?/, 
 		rcolor= /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?(?:\s*,\s*([\.\d]+))?/,
 		filter = "progid:DXImageTransform.Microsoft.",
-		rsplit = /[\s-]/,
-		rspace = /(-?\s*)/g;
+		marker = '\u2063',
+		rmarker = /\u2063/g,
+		rbreakleft = /([\(\[\{])/g,
+		rbreakright = /([\)\]\}%°\!\?\u2014])/g,
+		rbreakboth = /([-\u2013])/g,
+		rsplit = /[\s\u2063]/,
+		rspace = /(\s*)/g;
 	
 	// create a plugin
 	$.fn.textshadow = function(value, options) {
@@ -56,28 +61,45 @@
 	// splits text nodes
 	function makeWords(textNode) {
 		// Split the text in the node by space characters
-		var text = textNode.nodeValue,
-			split = text.split(rsplit),
-			length, lastIndex = 0, spaces, node;
-		
+		var split, length, spaces, node,
+			text = textNode.nodeValue,
+			lastIndex = 0;
+
 		// Skip empty nodes
 		if (!text) {
 			return;
 		}
+
+		//correct for IE break characters
+		//leave a strange unicode character as a marker
+		text = text.replace(rbreakleft, marker + '$1')
+				.replace(rbreakright, '$1' + marker)
+				.replace(rbreakboth, marker + '$1' + marker);
+
+		// split the string by break characters
+		split = text.split(rsplit);
 		
+		// remove our markers
+		text = text.replace(rmarker, '');
+
 		// Add the original string (it gets split)
 		var fragment = document.createDocumentFragment();
 		
 		// loop by the splits
 		$.each(split, function() {
 			length = this.length;
-			if (!length) { // IE 9
+
+			// IE9 will return empty splits (consecutive spaces)
+			if (!length) {
 				return true;
 			}
-			
+
 			//include the trailing space characters
 			rspace.lastIndex = lastIndex + length;
-			spaces = rspace.exec(text);
+			spaces = rspace.exec(text);			
+			
+			// slice out our text
+			// create a new node with it
 			node = wrapWord(text.substr(lastIndex, length + spaces[1].length));
 			if (node !== null) {
 				fragment.appendChild(node);
@@ -90,7 +112,7 @@
 	var shadowNode = $('<span class="ui-text-shadow" />')[0],
 		origNode = $('<span class="ui-text-shadow-original" />')[0],
 		copyNode = $('<span class="ui-text-shadow-copy" />')[0];
-	
+
 	function wrapWord(text) {
 		if (!text.length) { // IE 9
 			return null;
@@ -143,7 +165,7 @@
 			$copy.css({
 				color: color,
 				left: (x - blur) + 'px',
-				right: -(x - blur) + 'px',
+				marginRight: -(x - blur) + 'px',
 				top: (y - blur) + 'px'
 			});
 			
