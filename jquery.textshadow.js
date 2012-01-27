@@ -165,7 +165,6 @@
 			$copy.css({
 				color: color,
 				left: (x - blur) + 'px',
-				marginRight: -(x - blur) + 'px',
 				top: (y - blur) + 'px'
 			});
 			
