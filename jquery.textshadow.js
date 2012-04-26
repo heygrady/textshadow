@@ -9,7 +9,8 @@
 		rbreakright = /([\)\]\}%°\!\?\u2014])/g,
 		rbreakboth = /([-\u2013])/g,
 		rsplit = /[\s\u2063]/,
-		rspace = /(\s*)/g;
+		rspace = /(\s*)/g,
+		rprespace = /^(\s*)/;
 	
 	// create a plugin
 	$.fn.textshadow = function(value, options) {
@@ -42,7 +43,7 @@
 	//---------------------
 	// For splitting words
 	//---------------------
-	// function for returning al words in an element as text nodes
+	// function for returning all words in an element as text nodes
 	function allWords(elem) {
 		$(elem).contents().each(function() {
 			if (this.nodeType === 3 && this.data) {
@@ -85,6 +86,9 @@
 		// Add the original string (it gets split)
 		var fragment = document.createDocumentFragment();
 		
+		// set the "last index" based on leading whitespace
+		lastIndex = rprespace.exec(text)[1].length;
+
 		// loop by the splits
 		$.each(split, function() {
 			length = this.length;
