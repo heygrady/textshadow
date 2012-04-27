@@ -72,7 +72,7 @@ For performance and flexibility reasons, it's best to use CSS rather than JS to 
       color: #000; /* color */
       filter:
         progid:DXImageTransform.Microsoft.Alpha(opacity=50) /* RGBA alpha */
-        progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=2); /* blue */
+        progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=2); /* blur */
       left: 1px; /* left - blur */
       top: 1px; /* top - blur */
     }
