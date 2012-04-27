@@ -31,7 +31,7 @@ if (!Modernizr.textshadow) {
 ```
  
 ### Required CSS
-There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well. Optionally, but recommended for eas-of-use, you could use the Compass mixin (detailed below) instead of the CSS file.
+There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well. Optionally, but recommended for ease-of-use, you could use the Compass mixin ([detailed below](#using-sass-and-compass)) instead of the CSS file.
 
 ```html
 <!doctype html>
@@ -55,7 +55,7 @@ There is a corresponding css file that provides base styles for the new elements
 ```
 
 ### Specifying Custom CSS
-For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript. For ease-of-use, try the Compass mixin instructions below.
+For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript. For ease-of-use, try the [Compass mixin instructions](#using-sass-and-compass) below.
 
 ```html
 <!doctype html>
