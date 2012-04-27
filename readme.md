@@ -1,9 +1,10 @@
 # Text Shadow
 This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It uses the Microsoft proprietary [blur filter](http://msdn.microsoft.com/en-us/library/ms532979(v=vs.85\).aspx) and the [alpha filter](http://msdn.microsoft.com/en-us/library/ms532967(v=vs.85\).aspx) along with layering to closely approximate `text-shadow`.
 
-* currently only pixel units are supported
-* cutting and pasting text will result in doubled text
-* the creation of the extra DOM nodes could potentially be faster
+* Currently only pixel units are supported
+* Cutting and pasting text will result in doubled text
+* The creation of the extra DOM nodes could potentially be faster
+* Multiple shadows are not supported. Only the first shadow will be rendered.
 
 ## Usage
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow).
@@ -19,17 +20,17 @@ if (!Modernizr.textshadow) {
   // normal
   $('h1').textshadow('2px 2px 2px #000');
   
-  // multiple shadows
-  $('h1').textshadow('2px 2px 2px #0f0, 4px 4px 2px #f00, 6px 6px 2px #00f');
-  
   // rgba
   $('h1').textshadow('2px 2px 2px rgba(0, 0, 0, 0.5)');
   
   // hsla
   $('h1').textshadow('2px 2px 2px hsla(0, 100%, 54%, .5)');
+  
+  // multiple shadows (currently not fully supported)
+  $('h1').textshadow('2px 2px 2px #0f0, 4px 4px 2px #f00, 6px 6px 2px #00f');
 }
 ```
- 
+
 ### Required CSS
 There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well. Optionally, but recommended for ease-of-use, you could use the Compass mixin ([detailed below](#using-sass-and-compass)) instead of the CSS file.
 
@@ -62,7 +63,6 @@ For performance and flexibility reasons, it's best to use CSS rather than JS to 
 <html>
 <head>
   ...
-
   <link rel="stylesheet" href="jquery.textshadow.css">
   <style>
     h1 {
