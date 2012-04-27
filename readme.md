@@ -31,7 +31,7 @@ if (!Modernizr.textshadow) {
 ```
  
 ### Required CSS
-There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well.
+There is a corresponding css file that provides base styles for the new elements used. It must be included in the document as well. Optionally, but recommended for eas-of-use, you could use the Compass mixin (detailed below) instead of the CSS file.
 
 ```html
 <!doctype html>
@@ -55,7 +55,7 @@ There is a corresponding css file that provides base styles for the new elements
 ```
 
 ### Specifying Custom CSS
-For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript.
+For performance and flexibility reasons, it's best to use CSS rather than JS to apply the shadow styles. Particularly when there are hover states or nested elements that need a different shadow applied. Overall the browser will perform better applying the filter properties from CSS rather than from JavaScript. For ease-of-use, try the Compass mixin instructions below.
 
 ```html
 <!doctype html>
@@ -90,4 +90,67 @@ For performance and flexibility reasons, it's best to use CSS rather than JS to 
   </script>
 </body>
 </html>
+```
+
+## Using Sass and Compass
+To make it easier to apply the custom CSS, it's recommended to use the Compass mixin provided. The provided Compass mixin will automatically generate the IE-specific styles that are compatible with the generated HTML structure. It also automatically applies the `text-shadow` for the browsers that support it.
+
+- [Sass](http://sass-lang.com)
+- [Compass](http://compass-style.org)
+- [Getting started with Sass and Compass](http://thesassway.com/beginner/getting-started-with-sass-and-compass)
+
+```scss
+// import the mixin
+@import "jquery.textshadow";
+
+// output the base CSS classes
+@include jquery-text-shadow-base-styles;
+
+// Apply a text-shadow to an element
+h1 {
+  @include jquery-text-shadow(3px 3px 2px rgba(0, 0, 0, 0.5));
+}
+```
+
+Then you can save some rendering time by having the jQuery plugin skip parsing and setting styles.
+
+```js
+if (!Modernizr.textshadow) {
+  // creates the HTML structure but doesn't try to apply the styles
+  $('h1').textshadow({useStyle: false});
+}
+```
+
+As an example, the SCSS code above will generate CSS similar to what is shown below.
+
+```css
+.ui-text-shadow, .ui-text-shadow-original {
+  position: relative;
+}
+
+.ui-text-shadow-original {
+  z-index: 1;
+  text-shadow: none;
+}
+
+.ui-text-shadow-copy {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  text-shadow: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+h1 {
+  text-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
+}
+h1 .ui-text-shadow-copy {
+  color: black;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50) progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=2);
+  left: 1px;
+  top: 1px;
+}
 ```

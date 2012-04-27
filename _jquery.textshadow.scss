@@ -1,0 +1,74 @@
+@import "compass/css3/text-shadow";
+@import "compass/css3/user-interface";
+
+@mixin jquery-text-shadow-base-styles {
+  .ui-text-shadow, .ui-text-shadow-original {
+    position: relative;
+  }
+  .ui-text-shadow-original {
+    z-index: 1;
+    text-shadow: none;
+  }
+  .ui-text-shadow-copy {
+    position: absolute;
+    z-index: 0;
+    
+    // default positioning
+    left: 0;
+    top: 0;
+    
+    // turn off shadow
+    text-shadow: none;
+    
+    // turn off selection
+    @include user-select(none);
+  }
+}
+
+@mixin jquery-text-shadow($shadow: default) {
+  @if $shadow == default {
+    $shadow: $default-text-shadow-color $default-text-shadow-h-offset $default-text-shadow-v-offset $default-text-shadow-blur;
+  }
+
+  $length: length($shadow);
+  
+  // some defaults
+  $color: $default-text-shadow-color;
+  $offset-x: $default-text-shadow-h-offset;
+  $offset-y: $default-text-shadow-v-offset;
+  $blur-radius: $default-text-shadow-blur;
+
+  // pull apart the individual arguments from the list
+  @if type-of(nth($shadow, 1)) == color {
+    // color first
+    $color: if($length >= 1, nth($shadow, 1), $color);
+    $offset-x: if($length >= 2, nth($shadow, 2), $offset-x);
+    $offset-y: if($length >= 3, nth($shadow, 3), $offset-y);
+    $blur-radius: if($length >= 4, nth($shadow, 4), $blur-radius);
+  } @else {
+    // color last
+    $color: if($length >= 4, nth($shadow, 4), $color);
+    $offset-x: if($length >= 1, nth($shadow, 1), $offset-x);
+    $offset-y: if($length >= 2, nth($shadow, 2), $offset-y);
+    $blur-radius: if($length >= 3, nth($shadow, 3), $blur-radius);
+  }
+
+  // seperate the color from the opacity
+  $opacity: round(alpha($color) * 100);
+  $color: rgb(red($color), green($color), blue($color));
+  
+  // remove the unit from the radius
+  $blur-radius: $blur-radius / 1px;
+
+  // for supported browers
+  @include text-shadow($shadow);
+
+  // for the jquery text-shadow plugin
+  .ui-text-shadow-copy {
+    color: $color;
+    filter: if($opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote(""))
+      unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})");
+    left: $offset-x - $blur-radius;
+    top: $offset-y - $blur-radius;
+  }
+}
