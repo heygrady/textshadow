@@ -34,23 +34,38 @@
   
   // some defaults
   $color: $default-text-shadow-color;
-  $offset-x: $default-text-shadow-h-offset;
-  $offset-y: $default-text-shadow-v-offset;
-  $blur-radius: $default-text-shadow-blur;
+  $offset-x: 0;
+  $offset-y: 0;
+  $blur-radius: 0;
+  $spread: 0; // IE10 only
 
   // pull apart the individual arguments from the list
   @if type-of(nth($shadow, 1)) == color {
-    // color first
-    $color: if($length >= 1, nth($shadow, 1), $color);
-    $offset-x: if($length >= 2, nth($shadow, 2), $offset-x);
-    $offset-y: if($length >= 3, nth($shadow, 3), $offset-y);
-    $blur-radius: if($length >= 4, nth($shadow, 4), $blur-radius);
+    // color first, blur, spread optional
+    @if $length >= 1 { $color: nth($shadow, 1); }
+    @if $length >= 2 { $offset-x: nth($shadow, 2); }
+    @if $length >= 3 { $offset-y: nth($shadow, 3); }
+    @if $length >= 4 { $blur-radius: nth($shadow, 4); }
+    @if $length == 5 { $spread: nth($shadow, 5); }
   } @else {
-    // color last
-    $color: if($length >= 4, nth($shadow, 4), $color);
-    $offset-x: if($length >= 1, nth($shadow, 1), $offset-x);
-    $offset-y: if($length >= 2, nth($shadow, 2), $offset-y);
-    $blur-radius: if($length >= 3, nth($shadow, 3), $blur-radius);
+    // color last or missing, blur optional, spread optional
+    @if $length == 5 and type-of(nth($shadow, 5)) == color {
+      $color: nth($shadow, 5);
+    }
+    @if $length == 4 and type-of(nth($shadow, 4)) == color {
+      $color: nth($shadow, 4);
+    }
+    @if $length == 3 and type-of(nth($shadow, 3)) == color {
+      $color: nth($shadow, 3);
+    }
+    @if $length >= 1 { $offset-x: nth($shadow, 1); }
+    @if $length >= 2 { $offset-y: nth($shadow, 2); }
+    @if $length >= 3 and type-of(nth($shadow, 3)) != color {
+      $blur-radius: nth($shadow, 3);
+    }
+    @if $length >= 4 and type-of(nth($shadow, 4)) != color {
+      $spread: nth($shadow, 4);
+    }
   }
 
   // seperate the color from the opacity
@@ -58,7 +73,9 @@
   $color: rgb(red($color), green($color), blue($color));
   
   // remove the unit from the radius
-  $blur-radius: $blur-radius / 1px;
+  @if unit($blur-radius) == px {
+    $blur-radius: $blur-radius / 1px;
+  }
 
   // for supported browers
   @include text-shadow($shadow);
