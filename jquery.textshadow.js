@@ -173,14 +173,12 @@
 			});
 			
 			// add in the filters
-			copy.style.filter = [
-				filter + "Alpha(",
-					"opacity=" + parseInt(opacity * 100, 10),
-				") ",
-				filter + "Blur(",
-					"pixelRadius=" + blur,
-				")"
-			].join('');
+			if (opacity < 1 || blur > 0) {
+				copy.style.filter = [
+					opacity < 1 ? filter + "Alpha(opacity=" + parseInt(opacity * 100, 10) + ") " : '',
+					blur > 0 ? filter + "Blur(pixelRadius=" + blur + ")" : ''
+				].join('');
+			}
 		});
 	}
 	

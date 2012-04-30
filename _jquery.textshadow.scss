@@ -84,7 +84,7 @@
   .ui-text-shadow-copy {
     color: $color;
     filter: if($opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote(""))
-      unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})");
+      if($blur-radius > 0, unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})"), unquote(""));
     left: $offset-x - $blur-radius;
     top: $offset-y - $blur-radius;
   }
