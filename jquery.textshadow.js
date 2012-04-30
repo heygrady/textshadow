@@ -11,6 +11,7 @@
         rbreakboth = /([-\u2013])/g,
         rsplit = /[\s\u2063]/,
         rspace = /(\s*)/g,
+        rspaceonly = /^\s*$/
         rprespace = /^(\s*)/;
     
     // create a plugin
@@ -67,8 +68,8 @@
             text = textNode.nodeValue,
             lastIndex = 0;
 
-        // Skip empty nodes
-        if (!text) {
+        // Skip empty nodes or nodes that are only whitespace
+        if (!text || /^\s*$/.test(text)) {
             return;
         }
 
@@ -139,7 +140,7 @@
     //---------------------
     function applyStyles($copy, value) {
         // skip this if there's no currentStyle property
-        if (!$copy[0].currentStyle) { return; }
+        if ($copy.length && !$copy[0].currentStyle) { return; }
 
         // this will work in IE
         $copy.each(function() {
