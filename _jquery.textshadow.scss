@@ -41,7 +41,7 @@
 
   // pull apart the individual arguments from the list
   @if type-of(nth($shadow, 1)) == color {
-    // color first, blur, spread optional
+    // color first, blur optional, spread optional
     @if $length >= 1 { $color: nth($shadow, 1); }
     @if $length >= 2 { $offset-x: nth($shadow, 2); }
     @if $length >= 3 { $offset-y: nth($shadow, 3); }

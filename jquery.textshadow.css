@@ -1,25 +1,23 @@
 .ui-text-shadow, .ui-text-shadow-original {
-	position: relative;
+  position: relative;
 }
 .ui-text-shadow-original {
-	z-index: 1;
-	text-shadow: none;
+  z-index: 1;
+  text-shadow: none;
 }
 .ui-text-shadow-copy {
-	position: absolute;
-	z-index: 0;
-	
-	/* default positioning */
-	left: 0;
-	top: 0;
-	
-	/* turn off shadow */
-	text-shadow: none;
-	
-	/* turn off selection */
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-o-user-select: none;
-	user-select: none;
+  position: absolute;
+  z-index: 0;
+  
+  /* default positioning */
+  left: 0;
+  top: 0;
+  
+  /* turn off shadow */
+  text-shadow: none;
+  
+  /* turn off selection */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
 }
