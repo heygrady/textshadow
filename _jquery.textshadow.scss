@@ -33,7 +33,7 @@
   $length: length($shadow);
   
   // some defaults
-  $color: $default-text-shadow-color;
+  $color: inherit;
   $offset-x: 0;
   $offset-y: 0;
   $blur-radius: 0;
