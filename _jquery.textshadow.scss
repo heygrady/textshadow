@@ -34,10 +34,11 @@
   
   // some defaults
   $color: inherit;
+  $opacity: 100;
   $offset-x: 0;
   $offset-y: 0;
   $blur-radius: 0;
-  $spread: 0; // IE10 only
+  $spread: 0; // IE10 only, not used
 
   // pull apart the individual arguments from the list
   @if type-of(nth($shadow, 1)) == color {
@@ -49,28 +50,24 @@
     @if $length == 5 { $spread: nth($shadow, 5); }
   } @else {
     // color last or missing, blur optional, spread optional
-    @if $length == 5 and type-of(nth($shadow, 5)) == color {
-      $color: nth($shadow, 5);
-    }
-    @if $length == 4 and type-of(nth($shadow, 4)) == color {
-      $color: nth($shadow, 4);
-    }
-    @if $length == 3 and type-of(nth($shadow, 3)) == color {
-      $color: nth($shadow, 3);
+    @if type-of(nth($shadow, $length)) == color {
+      $color: nth($shadow, $length);
     }
     @if $length >= 1 { $offset-x: nth($shadow, 1); }
     @if $length >= 2 { $offset-y: nth($shadow, 2); }
-    @if $length >= 3 and type-of(nth($shadow, 3)) != color {
-      $blur-radius: nth($shadow, 3);
+    @if $length >= 3 {
+      @if type-of(nth($shadow, 3)) != color { $blur-radius: nth($shadow, 3); }
     }
-    @if $length >= 4 and type-of(nth($shadow, 4)) != color {
-      $spread: nth($shadow, 4);
+    @if $length >= 4 {
+      @if type-of(nth($shadow, 4)) != color { $spread: nth($shadow, 4); }
     }
   }
 
   // seperate the color from the opacity
-  $opacity: round(alpha($color) * 100);
-  $color: rgb(red($color), green($color), blue($color));
+  @if $color != inherit {
+    $opacity: round(alpha($color) * 100);
+    $color: rgb(red($color), green($color), blue($color));
+  }
   
   // remove the unit from the radius
   @if unit($blur-radius) == px {
@@ -83,8 +80,8 @@
   // for the jquery text-shadow plugin
   .ui-text-shadow-copy {
     color: $color;
-    filter: if($opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote(""))
-      if($blur-radius > 0, unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})"), unquote(""));
+    filter: if( $opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote("") )
+      if( $blur-radius > 0, unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})"), unquote("") );
     left: $offset-x - $blur-radius;
     top: $offset-y - $blur-radius;
   }
