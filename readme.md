@@ -7,7 +7,7 @@ This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It u
 * Multiple shadows are not supported. Only the first shadow will be rendered.
 
 ## Usage
-It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow).
+It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow). Please minify the `jquery.textshadow.js` file using [UglifyJS](http://marijnhaverbeke.nl/uglifyjs) (or your favorite JS compressor) before deploying your code in production.
 
 ```javascript
 if (!Modernizr.textshadow) {
@@ -44,7 +44,7 @@ There is a corresponding css file that provides base styles for the new elements
 </head>
 <body>
   ...
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
   <script src="jquery.textshadow.js"></script>
   <script>
   if (!Modernizr.textshadow) {
@@ -81,7 +81,7 @@ For performance and flexibility reasons, it's best to use CSS rather than JS to 
 </head>
 <body>
   ...
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
   <script src="jquery.textshadow.js"></script>
   <script>
   if (!Modernizr.textshadow) {
