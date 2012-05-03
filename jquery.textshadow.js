@@ -1,4 +1,6 @@
 (function($, window, undefined) {
+    "use strict";
+
     //regex
     var rtextshadow = /(-?\d+px|(?:hsl|rgb)a?\(.+\)|#(?:[a-fA-F0-9]{3}){1,2}|0)/g,
         rcolortest = /^((?:rgb|hsl)a?|#)/,
@@ -8,11 +10,12 @@
         rmarker = /\u2063/g,
         rbreakleft = /([\(\[\{])/g,
         rbreakright = /([\)\]\}%°\!\?\u2014])/g,
-        rbreakboth = /([-\u2013])/g,
+        rbreakboth = /([\-\u2013])/g,
         rsplit = /[\s\u2063]/,
         rspace = /(\s*)/g,
-        rspaceonly = /^\s*$/
-        rprespace = /^(\s*)/;
+        rspaceonly = /^\s*$/,
+        rprespace = /^(\s*)/,
+        prefix = "ui-text-shadow";
     
     // create a plugin
     $.fn.textshadow = function(value, options) {
@@ -28,13 +31,13 @@
             var $elem = $(this), $copy;
             
             // find the copy elements
-            $copy = $elem.find('.ui-text-shadow-copy');
+            $copy = $elem.find('.' + prefix + '-copy');
             
             // create them if none exist
             if (!$copy.length) {
                 // create all of the elements
                 allWords(this);
-                $copy = $elem.find('.ui-text-shadow-copy');
+                $copy = $elem.find('.' + prefix + '-copy');
             }
             if (useStyle) {
                 applyStyles($copy, value);
@@ -54,7 +57,7 @@
             }
             
             var $elem = $(this);
-            if (this.nodeType === 1 && (!$elem.hasClass('ui-text-shadow') || !$elem.hasClass('ui-text-shadow-original') || !$elem.hasClass('ui-text-shadow-copy'))) {
+            if (this.nodeType === 1 && (!$elem.hasClass(prefix) || !$elem.hasClass(prefix + '-original') || !$elem.hasClass(prefix + '-copy'))) {
                 allWords(this);
                 return true;
             }
@@ -115,9 +118,9 @@
         textNode.parentNode.replaceChild(fragment.cloneNode(true), textNode);
     }
     
-    var shadowNode = $('<span class="ui-text-shadow" />')[0],
-        origNode = $('<span class="ui-text-shadow-original" />')[0],
-        copyNode = $('<span class="ui-text-shadow-copy" />')[0];
+    var shadowNode = $('<span class="' + prefix + '" />')[0],
+        origNode = $('<span class="' + prefix + '-original" />')[0],
+        copyNode = $('<span class="' + prefix + '-copy" />')[0];
 
     function wrapWord(text) {
         if (!text.length) { // IE 9
@@ -129,6 +132,7 @@
             
         shadow.appendChild(copy);
         shadow.appendChild(orig);
+        shadow.appendChild(document.createTextNode(" ")); // fixes #8
         
         orig.appendChild(document.createTextNode(text));
         copy.appendChild(document.createTextNode(text));
