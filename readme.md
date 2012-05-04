@@ -4,6 +4,7 @@ This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It u
 * Currently only pixel units are supported
 * Cutting and pasting text will result in doubled text
 * The creation of the extra DOM nodes could potentially be faster
+* Transitional doctypes are not supported because of a [weird IE error](#8)
 
 ## Usage
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow). Please minify the `jquery.textshadow.js` file using [UglifyJS](http://marijnhaverbeke.nl/uglifyjs) (or your favorite JS compressor) before deploying your code in production.
