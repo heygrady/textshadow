@@ -25,64 +25,71 @@
   }
 }
 
-@mixin jquery-text-shadow($shadow: default) {
-  @if $shadow == default {
-    $shadow: $default-text-shadow-color $default-text-shadow-h-offset $default-text-shadow-v-offset $default-text-shadow-blur;
-  }
-
-  $length: length($shadow);
-  
-  // some defaults
-  $color: inherit;
-  $opacity: 100;
-  $offset-x: 0;
-  $offset-y: 0;
-  $blur-radius: 0;
-  $spread: 0; // IE10 only, not used
-
-  // pull apart the individual arguments from the list
-  @if type-of(nth($shadow, 1)) == color {
-    // color first, blur optional, spread optional
-    @if $length >= 1 { $color: nth($shadow, 1); }
-    @if $length >= 2 { $offset-x: nth($shadow, 2); }
-    @if $length >= 3 { $offset-y: nth($shadow, 3); }
-    @if $length >= 4 { $blur-radius: nth($shadow, 4); }
-    @if $length == 5 { $spread: nth($shadow, 5); }
-  } @else {
-    // color last or missing, blur optional, spread optional
-    @if type-of(nth($shadow, $length)) == color {
-      $color: nth($shadow, $length);
-    }
-    @if $length >= 1 { $offset-x: nth($shadow, 1); }
-    @if $length >= 2 { $offset-y: nth($shadow, 2); }
-    @if $length >= 3 {
-      @if type-of(nth($shadow, 3)) != color { $blur-radius: nth($shadow, 3); }
-    }
-    @if $length >= 4 {
-      @if type-of(nth($shadow, 4)) != color { $spread: nth($shadow, 4); }
-    }
-  }
-
-  // seperate the color from the opacity
-  @if $color != inherit {
-    $opacity: round(alpha($color) * 100);
-    $color: rgb(red($color), green($color), blue($color));
-  }
-  
-  // remove the unit from the radius
-  @if unit($blur-radius) == px {
-    $blur-radius: $blur-radius / 1px;
-  }
-
+@mixin jquery-text-shadow($shadow-1: default, $shadow-2: false, $shadow-3: false, $shadow-4: false, $shadow-5: false, $shadow-6: false, $shadow-7: false, $shadow-8: false, $shadow-9: false, $shadow-10: false) {
   // for supported browers
-  @include text-shadow($shadow);
+  @include text-shadow($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10);
 
-  // for the jquery text-shadow plugin
-  .ui-text-shadow-copy {
-    color: $color;
-    filter: if( $opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote("") )
-      if( $blur-radius > 0, unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})"), unquote("") );
-    left: $offset-x - $blur-radius;
-    top: $offset-y - $blur-radius;
+  @if $shadow-1 == default {
+    $shadow-1: $default-text-shadow-color $default-text-shadow-h-offset $default-text-shadow-v-offset $default-text-shadow-blur;
+  }
+  $shadows: ($shadow-1, $shadow-2, $shadow-3, $shadow-4, $shadow-5, $shadow-6, $shadow-7, $shadow-8, $shadow-9, $shadow-10);
+  $i: 1;
+  @each $shadow in $shadows {
+    @if $shadow {
+      $length: length($shadow);
+      
+      // some defaults
+      $color: inherit;
+      $opacity: 100;
+      $offset-x: 0;
+      $offset-y: 0;
+      $blur-radius: 0;
+      $spread: 0; // IE10 only, not used
+
+      // pull apart the individual arguments from the list
+      @if type-of(nth($shadow, 1)) == color {
+        // color first, blur optional, spread optional
+        @if $length >= 1 { $color: nth($shadow, 1); }
+        @if $length >= 2 { $offset-x: nth($shadow, 2); }
+        @if $length >= 3 { $offset-y: nth($shadow, 3); }
+        @if $length >= 4 { $blur-radius: nth($shadow, 4); }
+        @if $length == 5 { $spread: nth($shadow, 5); }
+      } @else {
+        // color last or missing, blur optional, spread optional
+        @if type-of(nth($shadow, $length)) == color {
+          $color: nth($shadow, $length);
+        }
+        @if $length >= 1 { $offset-x: nth($shadow, 1); }
+        @if $length >= 2 { $offset-y: nth($shadow, 2); }
+        @if $length >= 3 {
+          @if type-of(nth($shadow, 3)) != color { $blur-radius: nth($shadow, 3); }
+        }
+        @if $length >= 4 {
+          @if type-of(nth($shadow, 4)) != color { $spread: nth($shadow, 4); }
+        }
+      }
+
+      // seperate the color from the opacity
+      @if $color != inherit {
+        $opacity: round(alpha($color) * 100);
+        $color: rgb(red($color), green($color), blue($color));
+      }
+      
+      // remove the unit from the radius
+      @if unit($blur-radius) == px {
+        $blur-radius: $blur-radius / 1px;
+      }
+
+
+      // for the jquery text-shadow plugin
+      .ui-text-shadow-copy-#{$i} {
+        color: $color;
+        filter: if( $opacity < 100, unquote("progid:DXImageTransform.Microsoft.Alpha(Opacity=#{$opacity})"), unquote("") )
+          if( $blur-radius > 0, unquote("progid:DXImageTransform.Microsoft.Blur(makeShadow=false,pixelRadius=#{$blur-radius})"), unquote("") );
+        left: $offset-x - $blur-radius;
+        top: $offset-y - $blur-radius;
+      }
+      $i: $i + 1;
+    }
   }
 }

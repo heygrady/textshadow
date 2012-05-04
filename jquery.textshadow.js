@@ -2,9 +2,11 @@
     "use strict";
 
     //regex
-    var rtextshadow = /(-?\d+px|(?:hsl|rgb)a?\(.+\)|#(?:[a-fA-F0-9]{3}){1,2}|0)/g,
+    var rtextshadow = /(-?\d+px|(?:hsl|rgb)a?\(.+?\)|#(?:[a-fA-F0-9]{3}){1,2}|0)/g,
+        rtextshadowsplit = /(,)(?=(?:[^\)]|\([^\)]*\))*$)/,
         rcolortest = /^((?:rgb|hsl)a?|#)/,
         rcolor = /(rgb|hsl)a?\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?(?:\s*,\s*([\.\d]+))?/,
+        rshadowsplit = /(,)(?=(?:[^\)]|\([^\)]*\))*$)/g,
         filter = "progid:DXImageTransform.Microsoft.",
         marker = '\u2063',
         rmarker = /\u2063/g,
@@ -25,22 +27,41 @@
         }
         var opts = options || {};
         var useStyle = opts.useStyle === false ? false : true;
+        var numShadows = opts.numShadows || 1;
         
         // loop the found items
         return this.each(function() {
-            var $elem = $(this), $copy;
+            var $elem = $(this),
+                copySelector = '.' + prefix + '-copy',
+                $copy;
             
             // find the copy elements
-            $copy = $elem.find('.' + prefix + '-copy');
+            $copy = $elem.find(copySelector);
             
             // create them if none exist
             if (!$copy.length) {
                 // create all of the elements
                 allWords(this);
-                $copy = $elem.find('.' + prefix + '-copy');
+                $copy = $elem.find(copySelector);
             }
             if (useStyle) {
                 applyStyles($copy, value);
+            } else if (numShadows > 1) {
+                $copy.filter(copySelector + '-1').each(function() {
+                    var i = 1,
+                        $parent = $(this.parentNode),
+                        shadowSelector, $elem;
+                    while (i < numShadows) {
+                        shadowSelector = copySelector + '-' + (i + 1);
+                        if (!$parent.find(shadowSelector).length) {
+                            $elem = $(this.cloneNode(true))
+                                .addClass(shadowSelector.substring(1))
+                                .removeClass(prefix + '-copy-1');
+                            $parent.prepend($elem);
+                        }
+                        i++;
+                    }
+                });
             }
         });
     };
@@ -120,7 +141,7 @@
     
     var shadowNode = $('<span class="' + prefix + '" />')[0],
         origNode = $('<span class="' + prefix + '-original" />')[0],
-        copyNode = $('<span class="' + prefix + '-copy" />')[0];
+        copyNode = $('<span class="' + prefix + '-copy ' + prefix + '-copy-1" />')[0];
 
     function wrapWord(text) {
         if (!text.length) { // IE 9
@@ -132,7 +153,7 @@
             
         shadow.appendChild(copy);
         shadow.appendChild(orig);
-        shadow.appendChild(document.createTextNode(" ")); // fixes #8
+        //shadow.appendChild(document.createTextNode(" ")); // fixes #8
         
         orig.appendChild(document.createTextNode(text));
         copy.appendChild(document.createTextNode(text));
@@ -151,7 +172,8 @@
             var copy = this,
                 style = value || copy.currentStyle['text-shadow'],
                 $copy = $(copy),
-                parent = copy.parentNode;
+                parent = copy.parentNode,
+                shadows, i = 0;
             
             // ensure we have the correct style using inheritence
             while ((!style || style === 'none') && parent.nodeName !== 'HTML') {
@@ -164,42 +186,64 @@
                 return true;
             }
             
-            // parse the style
-            var values = style.match(rtextshadow),
-                color = 'inherit',
-                opacity = 1,
-                x, y, blur;
+            // split the style, in case of multiple shadows
+            shadows = style.split(rtextshadowsplit);
 
-            // capture the values
-            
-            // pull out the color from either the first or last position
-            // actually remove it from the array
-            if (rcolortest.test(values[0])) {
-                opacity = getAlpha(values[0]);
-                color = toHex(values.shift());
-            } else if (rcolortest.test(values[values.length - 1])) {
-                opacity = getAlpha(values[values.length - 1]);
-                color = toHex(values.pop());
-            }
+            // loop by the splits
+            $.each(shadows, function() {
+                var shadow = this;
 
-            x = parseFloat(values[0]); // TODO: handle units
-            y = parseFloat(values[1]); // TODO: handle units
-            blur = values[2] !== undefined ? parseFloat(values[2]) : 0; // TODO: handle units
-            
-            // style the element
-            $copy.css({
-                color: color,
-                left: (x - blur) + 'px',
-                top: (y - blur) + 'px'
+                if (shadow == ',') { // IE 9
+                    return true;
+                }
+
+                // parse the style
+                var values = shadow.match(rtextshadow),
+                    color = 'inherit',
+                    opacity = 1,
+                    x, y, blur, $elem;
+
+                // capture the values
+
+                // pull out the color from either the first or last position
+                // actually remove it from the array
+                if (rcolortest.test(values[0])) {
+                    opacity = getAlpha(values[0]);
+                    color = toHex(values.shift());
+                } else if (rcolortest.test(values[values.length - 1])) {
+                    opacity = getAlpha(values[values.length - 1]);
+                    color = toHex(values.pop());
+                }
+
+                x = parseFloat(values[0]); // TODO: handle units
+                y = parseFloat(values[1]); // TODO: handle units
+                blur = values[2] !== undefined ? parseFloat(values[2]) : 0; // TODO: handle units
+                
+                // create new shadows when multiple shadows exist
+                if (i == 0) {
+                    $elem = $copy;
+                } else {
+                    $elem = $copy.clone().prependTo($copy.parent())
+                        .addClass(prefix + '-copy-' + (i + 1))
+                        .removeClass(prefix + '-copy-1');
+                }
+
+                // style the element
+                $elem.css({
+                    color: color,
+                    left: (x - blur) + 'px',
+                    top: (y - blur) + 'px'
+                });
+                
+                // add in the filters
+                if (opacity < 1 || blur > 0) {
+                    $elem[0].style.filter = [
+                        opacity < 1 ? filter + "Alpha(opacity=" + parseInt(opacity * 100, 10) + ") " : '',
+                        blur > 0 ? filter + "Blur(pixelRadius=" + blur + ")" : ''
+                    ].join('');
+                }
+                i++;
             });
-            
-            // add in the filters
-            if (opacity < 1 || blur > 0) {
-                copy.style.filter = [
-                    opacity < 1 ? filter + "Alpha(opacity=" + parseInt(opacity * 100, 10) + ") " : '',
-                    blur > 0 ? filter + "Blur(pixelRadius=" + blur + ")" : ''
-                ].join('');
-            }
         });
     }
     
