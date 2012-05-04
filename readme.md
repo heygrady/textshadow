@@ -4,7 +4,7 @@ This library is a `text-shadow` polyfill for Internet Explorer 9 and below. It u
 * Currently only pixel units are supported
 * Cutting and pasting text will result in doubled text
 * The creation of the extra DOM nodes could potentially be faster
-* Transitional doctypes are not supported because of a [weird IE error](#8)
+* Transitional doctypes are not supported because of a weird IE error (see #8)
 
 ## Usage
 It is recommended to use this library with a feature detection library such as [Modernizr](http://www.modernizr.com/docs/#textshadow). Please minify the `jquery.textshadow.js` file using [UglifyJS](http://marijnhaverbeke.nl/uglifyjs) (or your favorite JS compressor) before deploying your code in production.
@@ -12,7 +12,7 @@ It is recommended to use this library with a feature detection library such as [
 ### Options
 
 - **useStyle** *boolean* default: true - When `useStyle` is true the styles will be read using `currentStyle` and applied as an inline style to each element. Setting `useStyle` to false will skip this step and allow the special IE styles to be set in the CSS.
-- *numShadows* *integer* default: true - Only applies when `useStyle` is false. Will create multiple shadow nodes for use with multiple shadows. At least one shadow node is always created.
+- **numShadows** *integer* default: 1 - Only applies when `useStyle` is false. Will create multiple shadow nodes for use with multiple shadows. At least one shadow node is always created.
 
 ### Example Usage
 ```javascript
