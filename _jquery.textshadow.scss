@@ -16,6 +16,7 @@
     // default positioning
     left: 0;
     top: 0;
+    zoom: 1; // fixes IE7 when doctype is transitional
     
     // turn off shadow
     text-shadow: none;
