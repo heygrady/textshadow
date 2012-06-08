@@ -9,6 +9,8 @@
   position: absolute;
   z-index: 0;
   
+  line-height: 110.74235%; /* fixes #9 */
+
   /* default positioning */
   left: 0;
   top: 0;

@@ -13,10 +13,12 @@
     position: absolute;
     z-index: 0;
     
+    line-height: 110.74235%; // fixes #9
+
     // default positioning
     left: 0;
     top: 0;
-    zoom: 1; // fixes IE7 when doctype is transitional
+    zoom: 1; // fixes #8 in IE7 and below
     
     // turn off shadow
     text-shadow: none;
@@ -79,8 +81,7 @@
       // remove the unit from the radius
       @if unit($blur-radius) == px {
         $blur-radius: $blur-radius / 1px;
-      }
-
+      }      
 
       // for the jquery text-shadow plugin
       .ui-text-shadow-copy-#{$i} {
