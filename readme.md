@@ -13,6 +13,7 @@ It is recommended to use this library with a feature detection library such as [
 
 - **useStyle** *boolean* default: true - When `useStyle` is true the styles will be read using `currentStyle` and applied as an inline style to each element. Setting `useStyle` to false will skip this step and allow the special IE styles to be set in the CSS.
 - **numShadows** *integer* default: 1 - Only applies when `useStyle` is false. Will create multiple shadow nodes for use with multiple shadows. At least one shadow node is always created.
+- **destroy** *boolean* default: false - Removes any generated HTML elements. This will effectively remove the shadow from IE9 and below. This **does not** remove shadows defined in CSS from browsers that natively support shadows.
 
 ### Example Usage
 ```javascript
@@ -27,6 +28,9 @@ if (!Modernizr.textshadow) {
   // creates extra nodes for multiple shadows
   $('h1').textshadow({useStyle: false, numShadows: 4});
   
+  // destroys the generated HTML structure
+  $('h1').textshadow({destroy: true});
+
   // normal
   $('h1').textshadow('3px 3px 2px #000');
   

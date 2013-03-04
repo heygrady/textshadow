@@ -25,10 +25,18 @@
             options = value;
             value = null;
         }
-        var opts = options || {};
-        var useStyle = opts.useStyle === false ? false : true;
-        var numShadows = opts.numShadows || 1;
+        var opts = options || {},
+            useStyle = opts.useStyle === false ? false : true,
+            numShadows = opts.numShadows || 1,
+            doDestroy = opts.destroy || false;
         
+        // handle clearing all of the shadows
+        if (doDestroy) {
+            return this.each(function() {
+                destroy(this);
+            });
+        }
+
         // loop the found items
         return this.each(function() {
             var $elem = $(this),
@@ -37,7 +45,7 @@
             
             // find the copy elements
             $copy = $elem.find(copySelector);
-            
+
             // create them if none exist
             if (!$copy.length) {
                 // create all of the elements
@@ -65,6 +73,7 @@
             }
         });
     };
+
     
     //---------------------
     // For splitting words
@@ -143,6 +152,17 @@
         origNode = $('<span class="' + prefix + '-original" />')[0],
         copyNode = $('<span class="' + prefix + '-copy ' + prefix + '-copy-1" />')[0];
 
+    // Removes the generated elements
+    function destroy(elem) {
+        var $elem = $(elem);
+
+        $elem.find('.' + prefix + '-copy').remove();
+        $elem.find('.' + prefix + '-original').unwrap().each(function() {
+            $(this).replaceWith(this.childNodes);
+        });
+    }
+
+    // Wrap words in generated elements
     function wrapWord(text) {
         if (!text.length) { // IE 9
             return null;
